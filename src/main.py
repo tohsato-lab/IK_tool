@@ -39,7 +39,7 @@ def onclick(event):
     list_x = list(x)
     list_x[ind] = update_value_x
     points.remove()
-    ax.scatter3D(list_x, y_data, z_data, picker=10, color="blue")
+    points = ax.scatter3D(list_x, y_data, z_data, picker=10, color="blue")
     fig.canvas.draw()
 
 # main
