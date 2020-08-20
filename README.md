@@ -1,8 +1,8 @@
 ![reviewdog](https://github.com/tohsato-lab/tool/workflows/reviewdog/badge.svg?branch=master)
 
-# tool
+# bdmleditor
 
-This is a tool for `hdf5`'s file
+This is a editor for `hdf5`'s file
 
 ## Usage
 
@@ -10,4 +10,12 @@ Todo
 
 ## Install
 
-Todo
+### development
+
+```
+git clone https://github.com/tohsato-lab/bdmleditor.git && cd bdmleditor
+```
+
+```
+pip install -e .
+```
