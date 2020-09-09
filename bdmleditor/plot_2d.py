@@ -1,22 +1,21 @@
 import numpy as np
-import h5py
 import matplotlib.pyplot as plt
+import h5py
 
 
-class Figure:
-    def __init__(self, hdfpath, object_id, data_number):
+class Plot_2D:
+
+    def __init__(self, data, hdfpath, object_id):
+        self.data = data
         self.hdfpath = hdfpath
         self.object_id = object_id
-        self.data_number = data_number
-        self.points = ""
+        self.fig, self.ax, self.points = "", "", ""
         self.x_data, self.y_data = [], []
-        self.fig = ""
-        self.ax = ""
 
     def run(self):
         self.fig, self.ax = plt.subplots(figsize=(6, 4))
 
-        for data in self.data_load():
+        for data in self.data:
             self.x_data = np.append(self.x_data, data[4])
             self.y_data = np.append(self.y_data, data[5])
 
@@ -28,6 +27,9 @@ class Figure:
         f = h5py.File(self.hdfpath, 'r+')
         swap_data = f[self.object_id[0]].value
         ind = event.ind[0]
+        # バグ: 値が更新されない（グラフ上は更新される）
+        # matplotlibのバージョンを上げると再現する？
+        # 最悪バージョンロック
         print('x: {0}'.format(self.x_data[ind]),
               'y: {0}'.format(self.y_data[ind]),)
         try:
@@ -46,18 +48,3 @@ class Figure:
         data = f[self.object_id[0]]
         self.points = self.ax.scatter(data['x'], data['y'], s=1, picker=10, color="red")
         self.fig.canvas.draw()
-
-    def data_load(self):
-        with h5py.File(self.hdfpath, 'r') as f:
-            data = []
-            data.append(f[self.object_id[0]].value)
-            f.close()
-        return data[0]
-
-
-if __name__ == '__main__':
-    data_time = int(input('Enter time:'))
-    figure = Figure('../data/sample2.h5',
-                    ['data/' + str(data_time) + '/object/0'],
-                    data_time)
-    figure.run()
