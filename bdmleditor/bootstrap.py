@@ -9,8 +9,9 @@ def data_load(hdfpath, object_id):
         data.append(f[object_id[0]].value)
         # Todo 抽象化
         dimension = f['data/scaleUnit']['dimension'].astype(np.str)
+        object_def = f['data/objectDef']['oID']
         f.close()
-    return data, dimensional_judge(dimension[0])
+    return data, dimensional_judge(dimension[0]), object_def
 
 
 def dimensional_judge(dimension):
