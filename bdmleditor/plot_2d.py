@@ -10,16 +10,20 @@ class Plot_2D:
         self.hdfpath = hdfpath
         self.object_id = object_id
         self.fig, self.ax, self.points = "", "", ""
-        self.x_data, self.y_data = [], []
+        self.x_data, self.y_data = [[] * 0 for i in range(len(self.data))],\
+                                   [[] * 0 for i in range(len(self.data))],
 
     def run(self):
         self.fig, self.ax = plt.subplots(figsize=(6, 4))
 
-        for data in self.data:
-            self.x_data = np.append(self.x_data, data[4])
-            self.y_data = np.append(self.y_data, data[5])
+        for i in range(len(self.data)):
+            for data in self.data[i]:
+                self.x_data[i] = np.append(self.x_data[i], data['x'])
+                self.y_data[i] = np.append(self.y_data[i], data['y'])
 
-        self.points = self.ax.scatter(self.x_data, self.y_data, s=1, picker=10)
+        for i in range(len(self.data)):
+            self.points = self.ax.scatter(self.x_data[i], self.y_data[i], s=1, picker=10)
+
         self.fig.canvas.mpl_connect('pick_event', self.onclick)
         plt.show()
 
@@ -28,8 +32,6 @@ class Plot_2D:
         swap_data = f[self.object_id[0]].value
         ind = event.ind[0]
         # バグ: 値が更新されない（グラフ上は更新される）
-        # matplotlibのバージョンを上げると再現する？
-        # 最悪バージョンロック
         print('x: {0}'.format(self.x_data[ind]),
               'y: {0}'.format(self.y_data[ind]),)
         try:
