@@ -3,13 +3,18 @@ import sys
 import numpy as np
 
 
-def data_load(hdfpath, object_id):
+def data_load(hdfpath, object_path):
+    print(object_path)
     with h5py.File(hdfpath, 'r') as f:
-        data = []
-        data.append(f[object_id[0]].value)
+        object_def = f['data/objectDef']['oID']
+        data = [[] * 0 for i in range(len(object_def))]
+        for i in range(len(object_def)):
+            # 無駄に足されている、初期化が必要？
+            object_path_swap = ''
+            object_path_swap = object_path + str(i)
+            data[i].append(f[object_path_swap].value)
         # Todo 抽象化
         dimension = f['data/scaleUnit']['dimension'].astype(np.str)
-        object_def = f['data/objectDef']['oID']
         f.close()
     return data, dimensional_judge(dimension[0]), object_def
 
