@@ -4,7 +4,6 @@ import numpy as np
 
 
 def data_load(hdfpath, object_path):
-    print(object_path)
     with h5py.File(hdfpath, 'r') as f:
         object_def = f['data/objectDef']['oID']
         data = [[] * 0 for i in range(len(object_def))]
