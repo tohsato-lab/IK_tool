@@ -24,10 +24,11 @@ def entry_point(args):
     check_extension(args)
     # Todo 抽象性をあげよう...
     data_time = int(input('Enter time:'))
-    info = data_load(args.filename, ['data/' + str(data_time) + '/object/0'])
+    info = data_load(args.filename, 'data/' + str(data_time) + '/object/')
     if info[1] == '2D':
+        # info[0]の中に、bdmleditorのデータが格納されている
         from bdmleditor.plot_2d import Plot_2D
-        bdml_object = Plot_2D(info[0][0], args.filename,
+        bdml_object = Plot_2D(info[0], args.filename,
                               ['data/' + str(data_time) + '/object/0'])
         bdml_object.run()
     elif info[1] == '3D':
