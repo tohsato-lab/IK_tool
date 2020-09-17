@@ -1,6 +1,8 @@
 import argparse
 import platform
 from bdmleditor.bootstrap import data_load
+import os
+import sys
 
 
 def _get_version():
@@ -19,6 +21,7 @@ def arg_check():
 
 
 def entry_point(args):
+    check_extension(args)
     # Todo 抽象性をあげよう...
     data_time = int(input('Enter time:'))
     info = data_load(args.filename, ['data/' + str(data_time) + '/object/0'])
@@ -30,3 +33,8 @@ def entry_point(args):
     elif info[1] == '3D':
         # Todo 3D's feature
         print('Todo')
+
+
+def check_extension(args):
+    if not ('.h5' in os.path.splitext((args.filename)[1])):
+        sys.exit('This is not .h5 file')
