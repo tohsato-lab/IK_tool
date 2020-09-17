@@ -31,10 +31,13 @@ def entry_point(args):
                               ['data/' + str(data_time) + '/object/0'])
         bdml_object.run()
     elif info[1] == '3D':
-        # Todo 3D's feature
-        print('Todo')
+        from bdmleditor.plot_3d import Plot_3D
+        bdml_object = Plot_3D(info[0][0], args.filename,
+                              ['data/' + str(data_time) + '/object/0'])
+        bdml_object.run()
 
 
 def check_extension(args):
-    if not ('.h5' in os.path.splitext((args.filename)[1])):
+    filename, ext = os.path.splitext(args.filename)
+    if ext != '.h5':
         sys.exit('This is not .h5 file')
