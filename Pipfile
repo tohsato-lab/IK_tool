@@ -4,8 +4,13 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 
 [dev-packages]
+install = "*"
+python-language-server = {extras = ["all"], version = "*"}
 
 [packages]
+h5py = "*"
+numpy = "*"
+matplotlib = "*"
 
 [requires]
 python_version = "3.8"
