@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import h5py
+from matplotlib.widgets import Slider
 
 
 class Plot_2D:
@@ -14,13 +15,15 @@ class Plot_2D:
 
     def run(self):
         self.fig, self.ax = plt.subplots(figsize=(6, 4))
-
         for data in self.data:
             self.x_data = np.append(self.x_data, data[4])
             self.y_data = np.append(self.y_data, data[5])
 
+        slider_pos = plt.axes([0.1, 0.01, 0.8, 0.03])
         self.points = self.ax.scatter(self.x_data, self.y_data, s=1, picker=10)
         self.fig.canvas.mpl_connect('pick_event', self.onclick)
+        threshold_slider = Slider(slider_pos, 'time', 0, 100, valinit=0, valstep=1, dragging=True)
+        threshold_slider.on_changed(self.update)
         plt.show()
 
     def onclick(self, event):
@@ -47,4 +50,18 @@ class Plot_2D:
         f = h5py.File(self.hdfpath, 'r')
         data = f[self.object_id[0]]
         self.points = self.ax.scatter(data['x'], data['y'], s=1, picker=10, color="red")
+        self.fig.canvas.draw()
+
+    def update(self, slider_val):
+        from bdmleditor.bootstrap import data_load
+        self.object_id[0] = 'data/%s/object/0' %slider_val
+        # init
+        self.x_data, self.y_data = [], []
+        info = data_load(self.hdfpath, self.object_id)
+        for data in info[0][0]:
+            self.x_data = np.append(self.x_data, data['x'])
+            self.y_data = np.append(self.y_data, data['y'])
+        # # cast
+        self.points.remove()
+        self.points = self.ax.scatter(self.x_data, self.y_data, s=1, picker=10)
         self.fig.canvas.draw()
