@@ -6,7 +6,7 @@ import numpy as np
 def data_load(hdfpath, object_id):
     with h5py.File(hdfpath, 'r') as f:
         data = []
-        data.append(f[object_id[0]].value)
+        data.append(f[object_id[0]][()])
         # Todo 抽象化
         dimension = f['data/scaleUnit']['dimension'].astype(np.str)
         f.close()
