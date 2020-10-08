@@ -28,7 +28,7 @@ class Plot_2D:
 
     def onclick(self, event):
         f = h5py.File(self.hdfpath, 'r+')
-        swap_data = f[self.object_id[0]].value
+        swap_data = f[self.object_id[0]][()]
         ind = event.ind[0]
         # バグ: 値が更新されない（グラフ上は更新される）
         # matplotlibのバージョンを上げると再現する？
