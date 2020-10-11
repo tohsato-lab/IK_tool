@@ -30,9 +30,7 @@ class Plot_2D:
         f = h5py.File(self.hdfpath, 'r+')
         swap_data = f[self.object_id[0]][()]
         ind = event.ind[0]
-        # バグ: 値が更新されない（グラフ上は更新される）
-        # matplotlibのバージョンを上げると再現する？
-        # 最悪バージョンロック
+
         print('x: {0}'.format(self.x_data[ind]),
               'y: {0}'.format(self.y_data[ind]),)
         try:
@@ -50,6 +48,7 @@ class Plot_2D:
         f = h5py.File(self.hdfpath, 'r')
         data = f[self.object_id[0]]
         self.points = self.ax.scatter(data['x'], data['y'], s=1, picker=10, color="red")
+        self.x_data, self.y_data = data['x'], data['y']
         self.fig.canvas.draw()
 
     def update(self, slider_val):
