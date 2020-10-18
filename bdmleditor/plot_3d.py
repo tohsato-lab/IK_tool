@@ -17,10 +17,10 @@ class Plot_3D:
     def run(self):
         self.fig = plt.figure()
         self.ax = Axes3D(self.fig)
-        for data in self.data:
-            self.x_data = np.append(self.x_data, data['x'].astype(np.float))
-            self.y_data = np.append(self.y_data, data['y'].astype(np.float))
-            self.z_data = np.append(self.z_data, data['z'].astype(np.float))
+
+        self.x_data = np.append(self.x_data, self.data['x'].astype(np.float))
+        self.y_data = np.append(self.y_data, self.data['y'].astype(np.float))
+        self.z_data = np.append(self.z_data, self.data['z'].astype(np.float))
 
         slider_pos = plt.axes([0.1, 0.01, 0.8, 0.03])
         self.points = self.ax.scatter3D(self.x_data, self.y_data, self.z_data, picker=10)
