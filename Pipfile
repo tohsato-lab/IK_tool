@@ -11,6 +11,7 @@ python-language-server = {extras = ["all"], version = "*"}
 h5py = "*"
 numpy = "*"
 matplotlib = "*"
+pyyaml = "*"
 
 [requires]
 python_version = "3.8"

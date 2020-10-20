@@ -6,6 +6,7 @@ install_requires = [
     'numpy',
     'matplotlib',
     'h5py',
+    'pyyaml',
     # 'ansicolor>=0.2.4',
     # 'chardet>=2.3.0',
     # 'setuptools>=36.2.2',  # for enhanced marker support (used below).
