@@ -2,6 +2,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import h5py
 from matplotlib.widgets import Slider
+import os
+from bdmleditor.load_yaml import load_yamlinfo
 
 
 class Plot_2D:
@@ -22,7 +24,11 @@ class Plot_2D:
         slider_pos = plt.axes([0.1, 0.01, 0.8, 0.03])
         self.points = self.ax.scatter(self.x_data, self.y_data, s=1, picker=10)
         self.fig.canvas.mpl_connect('pick_event', self.onclick)
-        threshold_slider = Slider(slider_pos, 'time', 0, 100, valinit=0, valstep=1, dragging=True)
+        slider_maxmin_values = load_yamlinfo(os.path.expanduser("~/.bdmleditorrc.yml"))
+        threshold_slider = Slider(slider_pos, 'time',
+                                  slider_maxmin_values['minimum'],
+                                  slider_maxmin_values['maximum'],
+                                  valinit=0, valstep=1, dragging=True)
         threshold_slider.on_changed(self.update)
         plt.show()
 
