@@ -11,7 +11,7 @@ class Plot_2D:
         self.hdfpath = hdfpath
         self.object_id = object_id
         self.fig, self.ax, self.points = "", "", ""
-        self.x_data, self.y_data = [], []
+        self.x_data, self.y_data = np.array([]), np.array([])
         # flag event's value
         self.is_picking_object = False
         self.update_value_x, self.update_value_y = None, None
@@ -19,9 +19,8 @@ class Plot_2D:
 
     def run(self):
         self.fig, self.ax = plt.subplots(figsize=(6, 4))
-        for data in self.data:
-            self.x_data = np.append(self.x_data, data[4])
-            self.y_data = np.append(self.y_data, data[5])
+        self.x_data = np.append(self.x_data, self.data['x'])
+        self.y_data = np.append(self.y_data, self.data['y'])
 
         slider_pos = plt.axes([0.1, 0.01, 0.8, 0.03])
         self.points = self.ax.scatter(self.x_data, self.y_data, s=1, picker=10)
