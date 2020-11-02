@@ -12,6 +12,10 @@ class Plot_2D:
         self.object_id = object_id
         self.fig, self.ax, self.points = "", "", ""
         self.x_data, self.y_data = [], []
+        # flag event's value
+        self.is_picking_object = False
+        self.update_value_x, self.update_value_y = None, None
+        self.ind = None
 
     def run(self):
         self.fig, self.ax = plt.subplots(figsize=(6, 4))
@@ -21,37 +25,60 @@ class Plot_2D:
 
         slider_pos = plt.axes([0.1, 0.01, 0.8, 0.03])
         self.points = self.ax.scatter(self.x_data, self.y_data, s=1, picker=10)
-        self.fig.canvas.mpl_connect('pick_event', self.onclick)
+        self.fig.canvas.mpl_connect("motion_notify_event", self.on_motion)
+        self.fig.canvas.mpl_connect('pick_event', self.on_picked)
         threshold_slider = Slider(slider_pos, 'time', 0, 100, valinit=0, valstep=1, dragging=True)
-        threshold_slider.on_changed(self.update)
+        threshold_slider.on_changed(self.update_time)
         plt.show()
 
-    def onclick(self, event):
-        f = h5py.File(self.hdfpath, 'r+')
-        swap_data = f[self.object_id[0]][()]
-        ind = event.ind[0]
-
-        print('x: {0}'.format(self.x_data[ind]),
-              'y: {0}'.format(self.y_data[ind]),)
-        try:
-            update_value_x, update_value_y = map(float, input('Enter value: ').split())
-        except ValueError:
-            print('Error')
+    def on_motion(self, event):
+        if self.is_picking_object is not True:
+            return
+        print(event.ydata)
+        # こいつが動いたり動かなかったりする。困りましたねお客様
+        if event.button:
+            print("clicked!")
+            # 参照渡し
+            self.update_value_x, self.update_value_y = event.xdata, event.ydata
+            print(self.update_value_x)
+            # フラグを入れ替える
+            self.is_picking_object = False
+            self.update_graph_data()
+            self.update_graph_drawing()
             return
 
-        swap_data[ind][4] = update_value_x
-        swap_data[ind][5] = update_value_y
+    def on_picked(self, event):
+        print(event.artist)
+        if event.artist != self.points:
+            return
+        self.is_picking_object = True
+        self.ind = event.ind[0]
+
+    def update_graph_data(self):
+        if self.update_value_x is None or self.update_value_y is None:
+            print('fuga')
+            return
+        f = h5py.File(self.hdfpath, 'r+')
+        swap_data = f[self.object_id[0]][()]
+        print(swap_data[self.ind]['x'])
+        swap_data[self.ind]['x'] = self.update_value_x
+        swap_data[self.ind]['y'] = self.update_value_y
+        print(swap_data[self.ind]['y'])
         del f[self.object_id[0]]
         f.create_dataset(self.object_id[0], data=swap_data)
         f.close()
+
+    def update_graph_drawing(self):
         self.points.remove()
         f = h5py.File(self.hdfpath, 'r')
         data = f[self.object_id[0]]
-        self.points = self.ax.scatter(data['x'], data['y'], s=1, picker=10, color="red")
+        self.points = self.ax.scatter(data['x'], data['y'], s=1, picker=10)
         self.x_data, self.y_data = data['x'], data['y']
         self.fig.canvas.draw()
+        self.update_value_x, self.update_value_y = None, None
+        self.ind = None
 
-    def update(self, slider_val):
+    def update_time(self, slider_val):
         from bdmleditor.bootstrap import data_load
         self.object_id[0] = 'data/%s/object/0' %slider_val
         # init
