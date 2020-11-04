@@ -33,13 +33,13 @@ class Plot_2D:
     def on_motion(self, event):
         if self.is_picking_object is not True:
             return
-        print(event.ydata)
+        print('x: {0}'.format(event.xdata),
+              'y: {0}'.format(event.ydata))
         # こいつが動いたり動かなかったりする。困りましたねお客様
         if event.button:
             print("clicked!")
             # 参照渡し
             self.update_value_x, self.update_value_y = event.xdata, event.ydata
-            print(self.update_value_x)
             # フラグを入れ替える
             self.is_picking_object = False
             self.update_graph_data()
@@ -47,7 +47,6 @@ class Plot_2D:
             return
 
     def on_picked(self, event):
-        print(event.artist)
         if event.artist != self.points:
             return
         self.is_picking_object = True
@@ -55,14 +54,11 @@ class Plot_2D:
 
     def update_graph_data(self):
         if self.update_value_x is None or self.update_value_y is None:
-            print('fuga')
             return
         f = h5py.File(self.hdfpath, 'r+')
         swap_data = f[self.object_id[0]][()]
-        print(swap_data[self.ind]['x'])
         swap_data[self.ind]['x'] = self.update_value_x
         swap_data[self.ind]['y'] = self.update_value_y
-        print(swap_data[self.ind]['y'])
         del f[self.object_id[0]]
         f.create_dataset(self.object_id[0], data=swap_data)
         f.close()
@@ -86,7 +82,7 @@ class Plot_2D:
         for data in info[0][0]:
             self.x_data = np.append(self.x_data, data['x'])
             self.y_data = np.append(self.y_data, data['y'])
-        # # cast
+        # cast
         self.points.remove()
         self.points = self.ax.scatter(self.x_data, self.y_data, s=1, picker=10)
         self.fig.canvas.draw()
