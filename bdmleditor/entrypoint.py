@@ -23,7 +23,7 @@ def arg_check():
 
 def list_parse(data_time, object_def, hdfpath):
     if object_def in objectdef_load(hdfpath):
-        return ['data/' + str(data_time) + '/object/' + str(object_def)]
+        return ['data/', str(data_time), '/object/', str(object_def)]
     else:
         sys.exit("no exists objectdef")
 
@@ -35,7 +35,7 @@ def entry_point(args):
     data = list_parse(int(input('Enter time:')),
                       int(input('Enter objectdef:')),
                       args.filename)
-    info = data_load(args.filename, data)
+    info = data_load(args.filename, ''.join(data))
     if info[1] == '2D':
         from bdmleditor.plotter.plot_2d import Plot_2D
         bdml_object = Plot_2D(info[0][0], args.filename, data)
