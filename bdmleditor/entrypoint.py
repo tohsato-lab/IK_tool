@@ -26,12 +26,12 @@ def entry_point(args):
     data_time = int(input('Enter time:'))
     info = data_load(args.filename, ['data/' + str(data_time) + '/object/0'])
     if info[1] == '2D':
-        from bdmleditor.plot_2d import Plot_2D
+        from bdmleditor.plotter.plot_2d import Plot_2D
         bdml_object = Plot_2D(info[0][0], args.filename,
                               ['data/' + str(data_time) + '/object/0'])
         bdml_object.run()
     elif info[1] == '3D':
-        from bdmleditor.plot_3d import Plot_3D
+        from bdmleditor.plotter.plot_3d import Plot_3D
         bdml_object = Plot_3D(info[0][0], args.filename,
                               ['data/' + str(data_time) + '/object/0'])
         bdml_object.run()
