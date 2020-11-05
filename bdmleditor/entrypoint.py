@@ -1,6 +1,7 @@
 import argparse
 import platform
 from bdmleditor.bootstrap import data_load
+from bdmleditor.bootstrap import objectdef_load
 import os
 import sys
 
@@ -20,20 +21,28 @@ def arg_check():
     return args
 
 
+def list_parse(data_time, object_def, hdfpath):
+    if object_def in objectdef_load(hdfpath):
+        return ['data/', str(data_time), '/object/', str(object_def)]
+    else:
+        sys.exit("no exists objectdef")
+
+
 def entry_point(args):
     check_extension(args)
+    print('objectdef list: {0}'.format(objectdef_load(args.filename)))
     # Todo 抽象性をあげよう...
-    data_time = int(input('Enter time:'))
-    info = data_load(args.filename, ['data/' + str(data_time) + '/object/0'])
+    data = list_parse(int(input('Enter time:')),
+                      int(input('Enter objectdef:')),
+                      args.filename)
+    info = data_load(args.filename, ''.join(data))
     if info[1] == '2D':
         from bdmleditor.plotter.plot_2d import Plot_2D
-        bdml_object = Plot_2D(info[0][0], args.filename,
-                              ['data/' + str(data_time) + '/object/0'])
+        bdml_object = Plot_2D(info[0][0], args.filename, data)
         bdml_object.run()
     elif info[1] == '3D':
         from bdmleditor.plotter.plot_3d import Plot_3D
-        bdml_object = Plot_3D(info[0][0], args.filename,
-                              ['data/' + str(data_time) + '/object/0'])
+        bdml_object = Plot_3D(info[0][0], args.filename, data)
         bdml_object.run()
 
 

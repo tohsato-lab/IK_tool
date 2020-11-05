@@ -56,17 +56,17 @@ class Plot_2D:
         if self.update_value_x is None or self.update_value_y is None:
             return
         f = h5py.File(self.hdfpath, 'r+')
-        swap_data = f[self.object_id[0]][()]
+        swap_data = f[''.join(self.object_id)][()]
         swap_data[self.ind]['x'] = self.update_value_x
         swap_data[self.ind]['y'] = self.update_value_y
-        del f[self.object_id[0]]
-        f.create_dataset(self.object_id[0], data=swap_data)
+        del f[''.join(self.object_id)]
+        f.create_dataset(''.join(self.object_id), data=swap_data)
         f.close()
 
     def update_graph_drawing(self):
         self.points.remove()
         f = h5py.File(self.hdfpath, 'r')
-        data = f[self.object_id[0]]
+        data = f[''.join(self.object_id)]
         self.points = self.ax.scatter(data['x'], data['y'], s=1, picker=10)
         self.x_data, self.y_data = data['x'], data['y']
         self.fig.canvas.draw()
@@ -75,14 +75,14 @@ class Plot_2D:
 
     def update_time(self, slider_val):
         from bdmleditor.bootstrap import data_load
-        self.object_id[0] = 'data/%s/object/0' %slider_val
-        # init
+        print(self.object_id)
+        # object id is ['data/', str(data_time), '/object/', str(object_def)]
+        self.object_id[1] = str(slider_val)
         self.x_data, self.y_data = [], []
-        info = data_load(self.hdfpath, self.object_id)
+        info = data_load(self.hdfpath, ''.join(self.object_id))
         for data in info[0][0]:
             self.x_data = np.append(self.x_data, data['x'])
             self.y_data = np.append(self.y_data, data['y'])
-        # cast
         self.points.remove()
         self.points = self.ax.scatter(self.x_data, self.y_data, s=1, picker=10)
         self.fig.canvas.draw()

@@ -6,7 +6,7 @@ import numpy as np
 def data_load(hdfpath, object_id):
     with h5py.File(hdfpath, 'r') as f:
         data = []
-        data.append(f[object_id[0]][()])
+        data.append(f[object_id][()])
         # Todo 抽象化
         dimension = f['data/scaleUnit']['dimension'].astype(np.str)
         f.close()
@@ -20,3 +20,10 @@ def dimensional_judge(dimension):
         return '2D'
     else:
         sys.exit("didn't know the dimensions.")
+
+
+def objectdef_load(hdfpath):
+    with h5py.File(hdfpath, 'r') as f:
+        objectdef_list = f['data/objectDef']['oID']
+        f.close()
+    return objectdef_list
