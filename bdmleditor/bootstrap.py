@@ -20,3 +20,10 @@ def dimensional_judge(dimension):
         return '2D'
     else:
         sys.exit("didn't know the dimensions.")
+
+
+def objectdef_load(hdfpath):
+    with h5py.File(hdfpath, 'r') as f:
+        objectdef_list = f['data/objectDef']['oID']
+        f.close()
+    return objectdef_list
