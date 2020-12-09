@@ -56,7 +56,12 @@ class Plot_3D:
     def on_pressed(self, event):
         if self.editmode_flag:
             return
-        self.z_axis_number = int(input("enter z axis's value:"))
+        try:
+            self.z_axis_number = int(input("enter z axis's value:"))
+        except ValueError:
+            print("please enter a value")
+            return
+
         self.draw_2d_graph()
 
     def on_picked(self, event):
@@ -87,8 +92,6 @@ class Plot_3D:
                                                         s=1, picker=10)
 
         self.fig_editmode.canvas.mpl_connect("pick_event", self.on_picked)
-        self.fig_editmode.canvas.mpl_connect('pick_event', self.on_picked)
-#         self.fig_editmode.canvas.mpl_connect("motion_notify_event", self.on_motion)
         self.editmode_flag = True
         plt.show()
 
