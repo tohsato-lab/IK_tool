@@ -37,6 +37,7 @@ class Plot_2D:
             self.fig.canvas.mpl_connect('pick_event', self.on_picked_edit)
         elif event.key == "d":
             print("enter delete mode")
+            self.fig.canvas.mpl_connect('on_picked_delete')
         elif event.key == "h":
             print("enter show help")
         elif event.key == "r":
@@ -58,6 +59,7 @@ class Plot_2D:
             self.is_picking_object = False
             self.update_graph_data()
             self.update_graph_drawing()
+            self.fig.canvas.mpl_disconnect(self.on_motion)
             return
 
     # 現在のエントリーポイント
@@ -68,6 +70,18 @@ class Plot_2D:
         self.ind = event.ind[0]
         self.fig.canvas.mpl_connect("motion_notify_event", self.on_motion)
         self.fig.canvas.mpl_disconnect(self.on_picked_edit)
+
+    def on_picked_delete(self, event):
+        if event.artist != self.points:
+            return
+        self.is_picking_object = True
+        self.ind = event.ind[0]
+        self.delete_data()
+        return
+
+    def delete_data():
+        # ここに値を消す処理を書く
+        return
 
     def update_graph_data(self):
         if self.update_value_x is None or self.update_value_y is None:
