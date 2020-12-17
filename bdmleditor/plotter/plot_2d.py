@@ -37,7 +37,7 @@ class Plot_2D:
             self.fig.canvas.mpl_connect('pick_event', self.on_picked_edit)
         elif event.key == "d":
             print("enter delete mode")
-            self.fig.canvas.mpl_connect('on_picked_delete')
+            self.fig.canvas.mpl_connect('pick_event', self.on_picked_delete)
         elif event.key == "h":
             print("enter show help")
         elif event.key == "r":
@@ -48,6 +48,7 @@ class Plot_2D:
     def on_motion(self, event):
         if self.is_picking_object is not True:
             return
+        print("ここ通ってる？")
         print('x: {0}'.format(event.xdata),
               'y: {0}'.format(event.ydata))
         # こいつが動いたり動かなかったりする。困りましたねお客様
@@ -70,17 +71,25 @@ class Plot_2D:
         self.ind = event.ind[0]
         self.fig.canvas.mpl_connect("motion_notify_event", self.on_motion)
         self.fig.canvas.mpl_disconnect(self.on_picked_edit)
+        return
 
     def on_picked_delete(self, event):
         if event.artist != self.points:
             return
-        self.is_picking_object = True
         self.ind = event.ind[0]
-        self.delete_data()
+        self.delete_graph_data()
+        self.fig.canvas.mpl_disconnect(self.on_picked_delete)
+        self.update_graph_drawing()
         return
 
-    def delete_data():
+    def delete_graph_data(self):
         # ここに値を消す処理を書く
+        with h5py.File(self.hdfpath, 'r+') as f:
+            swap_data = f[''.join(self.object_id)][()]
+            swap_data = np.delete(swap_data, self.ind)
+            del f[''.join(self.object_id)]
+            f.create_dataset(''.join(self.object_id), data=swap_data)
+            f.close()
         return
 
     def update_graph_data(self):
@@ -103,6 +112,8 @@ class Plot_2D:
         self.fig.canvas.draw()
         self.update_value_x, self.update_value_y = None, None
         self.ind = None
+        print("hoge")
+        return
 
     def update_time(self, slider_val):
         from bdmleditor.bootstrap import data_load
