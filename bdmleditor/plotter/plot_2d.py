@@ -24,19 +24,23 @@ class Plot_2D:
 
         slider_pos = plt.axes([0.1, 0.01, 0.8, 0.03])
         self.points = self.ax.scatter(self.x_data, self.y_data, s=1, picker=10)
-        self.fig.canvas.mpl_connect("motion_notify_event", self.on_motion)
-        self.fig.canvas.mpl_connect('pick_event', self.on_picked)
+        self.fig.canvas.mpl_connect("key_press_event", self.press)
+#         self.fig.canvas.mpl_connect("motion_notify_event", self.on_motion)
+#         self.fig.canvas.mpl_connect('pick_event', self.on_picked)
         threshold_slider = Slider(slider_pos, 'time', 0, 100, valinit=0, valstep=1, dragging=True)
         threshold_slider.on_changed(self.update_time)
         plt.show()
 
-    def press(event):
+    def press(self, event):
         if event.key == "e":
-            print("edit mode")
+            print("enter edit mode")
+            self.fig.canvas.mpl_connect('pick_event', self.on_picked_edit)
         elif event.key == "d":
-            print("delete mode")
+            print("enter delete mode")
         elif event.key == "h":
-            print("show help")
+            print("enter show help")
+        elif event.key == "r":
+            print("reset all flag")
         else:
             return
 
@@ -56,11 +60,14 @@ class Plot_2D:
             self.update_graph_drawing()
             return
 
-    def on_picked(self, event):
+    # 現在のエントリーポイント
+    def on_picked_edit(self, event):
         if event.artist != self.points:
             return
         self.is_picking_object = True
         self.ind = event.ind[0]
+        self.fig.canvas.mpl_connect("motion_notify_event", self.on_motion)
+        self.fig.canvas.mpl_disconnect(self.on_picked_edit)
 
     def update_graph_data(self):
         if self.update_value_x is None or self.update_value_y is None:
