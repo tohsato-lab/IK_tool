@@ -24,15 +24,31 @@ class Plot_2D:
 
         slider_pos = plt.axes([0.1, 0.01, 0.8, 0.03])
         self.points = self.ax.scatter(self.x_data, self.y_data, s=1, picker=10)
-        self.fig.canvas.mpl_connect("motion_notify_event", self.on_motion)
-        self.fig.canvas.mpl_connect('pick_event', self.on_picked)
+        self.fig.canvas.mpl_connect("key_press_event", self.press)
+#         self.fig.canvas.mpl_connect("motion_notify_event", self.on_motion)
+#         self.fig.canvas.mpl_connect('pick_event', self.on_picked)
         threshold_slider = Slider(slider_pos, 'time', 0, 100, valinit=0, valstep=1, dragging=True)
         threshold_slider.on_changed(self.update_time)
         plt.show()
 
+    def press(self, event):
+        if event.key == "e":
+            print("enter edit mode")
+            self.fig.canvas.mpl_connect('pick_event', self.on_picked_edit)
+        elif event.key == "d":
+            print("enter delete mode")
+            self.fig.canvas.mpl_connect('pick_event', self.on_picked_delete)
+        elif event.key == "h":
+            print("enter show help")
+        elif event.key == "r":
+            print("reset all flag")
+        else:
+            return
+
     def on_motion(self, event):
         if self.is_picking_object is not True:
             return
+        print("ここ通ってる？")
         print('x: {0}'.format(event.xdata),
               'y: {0}'.format(event.ydata))
         # こいつが動いたり動かなかったりする。困りましたねお客様
@@ -44,13 +60,37 @@ class Plot_2D:
             self.is_picking_object = False
             self.update_graph_data()
             self.update_graph_drawing()
+            self.fig.canvas.mpl_disconnect(self.on_motion)
             return
 
-    def on_picked(self, event):
+    # 現在のエントリーポイント
+    def on_picked_edit(self, event):
         if event.artist != self.points:
             return
         self.is_picking_object = True
         self.ind = event.ind[0]
+        self.fig.canvas.mpl_connect("motion_notify_event", self.on_motion)
+        self.fig.canvas.mpl_disconnect(self.on_picked_edit)
+        return
+
+    def on_picked_delete(self, event):
+        if event.artist != self.points:
+            return
+        self.ind = event.ind[0]
+        self.delete_graph_data()
+        self.fig.canvas.mpl_disconnect(self.on_picked_delete)
+        self.update_graph_drawing()
+        return
+
+    def delete_graph_data(self):
+        # ここに値を消す処理を書く
+        with h5py.File(self.hdfpath, 'r+') as f:
+            swap_data = f[''.join(self.object_id)][()]
+            swap_data = np.delete(swap_data, self.ind)
+            del f[''.join(self.object_id)]
+            f.create_dataset(''.join(self.object_id), data=swap_data)
+            f.close()
+        return
 
     def update_graph_data(self):
         if self.update_value_x is None or self.update_value_y is None:
@@ -72,6 +112,8 @@ class Plot_2D:
         self.fig.canvas.draw()
         self.update_value_x, self.update_value_y = None, None
         self.ind = None
+        print("hoge")
+        return
 
     def update_time(self, slider_val):
         from bdmleditor.bootstrap import data_load
