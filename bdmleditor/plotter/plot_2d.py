@@ -30,6 +30,16 @@ class Plot_2D:
         threshold_slider.on_changed(self.update_time)
         plt.show()
 
+    def press(event):
+        if event.key == "e":
+            print("edit mode")
+        elif event.key == "d":
+            print("delete mode")
+        elif event.key == "h":
+            print("show help")
+        else:
+            return
+
     def on_motion(self, event):
         if self.is_picking_object is not True:
             return
