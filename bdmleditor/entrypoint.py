@@ -46,7 +46,7 @@ def entry_point(args):
         bdml_object.run()
     elif info[1] == '3D':
         from bdmleditor.plotter.plot_3d import Plot_3D
-        bdml_object = Plot_3D(info[0][0], args.filename, data)
+        bdml_object = Plot_3D(info[0][0], args.filename, data, elapsed_time)
         bdml_object.run()
 
 

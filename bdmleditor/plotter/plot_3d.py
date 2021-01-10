@@ -3,6 +3,7 @@ import numpy as np
 import h5py
 from mpl_toolkits.mplot3d import Axes3D
 from matplotlib.widgets import Slider
+import time
 
 
 class Plot_3D:
@@ -11,7 +12,7 @@ class Plot_3D:
     graph_2d_data_x = None
     graph_2d_data_y = None
 
-    def __init__(self, data, hdfpath, object_id):
+    def __init__(self, data, hdfpath, object_id, load_time):
         self.data = data
         self.hdfpath = hdfpath
         self.object_id = object_id
@@ -21,8 +22,10 @@ class Plot_3D:
         self.update_value_x, self.update_value_y, self.update_value_z = None, None, None
         self.z_axis_number = None
         self.graph_2d_data_x, self.graph_2d_data_y  = np.array([]), np.array([])
+        self.load_time = load_time
 
     def run(self):
+        start = time.time()
         self.fig = plt.figure()
         self.ax = Axes3D(self.fig)
 
@@ -38,7 +41,9 @@ class Plot_3D:
         self.points = self.ax.scatter(self.x_data, self.y_data, self.z_data, s=1, picker=10)
         # matplotlib backend's connect
         self.fig.canvas.mpl_connect('button_press_event', self.on_pressed)
-        plt.show()
+        elapsed_time = time.time() - start + self.load_time
+        print("\nelapsed_time:{0}".format(elapsed_time) + "[sec]")
+        plt.show(block=False)
 
     def on_motion(self, event):
         if self.editmode_flag is not True:

@@ -33,7 +33,7 @@ class Plot_2D:
         threshold_slider.on_changed(self.update_time)
         elapsed_time = time.time() - start + self.load_time
         print("elapsed_time:{0}".format(elapsed_time) + "[sec]")
-        plt.show()
+        plt.show(block=False)
 
     def on_motion(self, event):
         if self.is_picking_object is not True:
