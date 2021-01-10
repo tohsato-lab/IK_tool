@@ -2,11 +2,12 @@ import numpy as np
 import matplotlib.pyplot as plt
 import h5py
 from matplotlib.widgets import Slider
+import time
 
 
 class Plot_2D:
 
-    def __init__(self, data, hdfpath, object_id):
+    def __init__(self, data, hdfpath, object_id, load_time):
         self.data = data
         self.hdfpath = hdfpath
         self.object_id = object_id
@@ -16,8 +17,10 @@ class Plot_2D:
         self.is_picking_object = False
         self.update_value_x, self.update_value_y = None, None
         self.ind = None
+        self.load_time = load_time
 
     def run(self):
+        start = time.time()
         self.fig, self.ax = plt.subplots(figsize=(6, 4))
         self.x_data = np.append(self.x_data, self.data['x'])
         self.y_data = np.append(self.y_data, self.data['y'])
@@ -28,6 +31,8 @@ class Plot_2D:
         self.fig.canvas.mpl_connect('pick_event', self.on_picked)
         threshold_slider = Slider(slider_pos, 'time', 0, 100, valinit=0, valstep=1, dragging=True)
         threshold_slider.on_changed(self.update_time)
+        elapsed_time = time.time() - start + self.load_time
+        print("elapsed_time:{0}".format(elapsed_time) + "[sec]")
         plt.show()
 
     def on_motion(self, event):
