@@ -47,7 +47,7 @@ class Plot_2D:
             return
 
     def on_picked(self, event):
-        if event.artist != self.points:
+        if event.artist != self.points or self.is_picking_object is True:
             return
         self.is_picking_object = True
         self.ind = event.ind[0]
