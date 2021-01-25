@@ -19,8 +19,8 @@ class Plot_2D:
 
     def run(self):
         self.fig, self.ax = plt.subplots(figsize=(6, 4))
-        self.x_data = np.append(self.x_data, self.data['x'])
-        self.y_data = np.append(self.y_data, self.data['y'])
+        self.x_data = np.append(self.x_data, self.data['x'].astype(np.float))
+        self.y_data = np.append(self.y_data, self.data['y'].astype(np.float))
 
         slider_pos = plt.axes([0.1, 0.01, 0.8, 0.03])
         self.points = self.ax.scatter(self.x_data, self.y_data, s=1, picker=10)
@@ -67,7 +67,7 @@ class Plot_2D:
         self.points.remove()
         f = h5py.File(self.hdfpath, 'r')
         data = f[''.join(self.object_id)]
-        self.points = self.ax.scatter(data['x'], data['y'], s=1, picker=10)
+        self.points = self.ax.scatter(data['x'].astype(np.float), data['y'].astype(np.float), s=1, picker=10)
         self.x_data, self.y_data = data['x'], data['y']
         self.fig.canvas.draw()
         self.update_value_x, self.update_value_y = None, None
@@ -81,8 +81,8 @@ class Plot_2D:
         self.x_data, self.y_data = [], []
         info = data_load(self.hdfpath, ''.join(self.object_id))
         for data in info[0][0]:
-            self.x_data = np.append(self.x_data, data['x'])
-            self.y_data = np.append(self.y_data, data['y'])
+            self.x_data = np.append(self.x_data, data['x'].astype(np.float))
+            self.y_data = np.append(self.y_data, data['y'].astype(np.float))
         self.points.remove()
         self.points = self.ax.scatter(self.x_data, self.y_data, s=1, picker=10)
         self.fig.canvas.draw()
