@@ -22,8 +22,8 @@ class Plot_2D:
     def run(self):
         start = time.time()
         self.fig, self.ax = plt.subplots(figsize=(6, 4))
-        self.x_data = np.append(self.x_data, self.data['x'])
-        self.y_data = np.append(self.y_data, self.data['y'])
+        self.x_data = np.append(self.x_data, self.data['x'].astype(np.float))
+        self.y_data = np.append(self.y_data, self.data['y'].astype(np.float))
 
         slider_pos = plt.axes([0.1, 0.01, 0.8, 0.03])
         self.points = self.ax.scatter(self.x_data, self.y_data, s=1, picker=10)
