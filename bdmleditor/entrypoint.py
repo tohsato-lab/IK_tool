@@ -2,6 +2,8 @@ import argparse
 import platform
 from bdmleditor.bootstrap import data_load
 from bdmleditor.bootstrap import objectdef_load
+from bdmleditor.plotter import plot_2d
+from bdmleditor.plotter import plot_3d
 import os
 import sys
 
@@ -37,12 +39,10 @@ def entry_point(args):
                       args.filename)
     info = data_load(args.filename, ''.join(data))
     if info[1] == '2D':
-        from bdmleditor.plotter.plot_2d import Plot_2D
-        bdml_object = Plot_2D(info[0][0], args.filename, data)
+        bdml_object = plot_2d.Plot_2D(info[0][0], args.filename, data)
         bdml_object.run()
     elif info[1] == '3D':
-        from bdmleditor.plotter.plot_3d import Plot_3D
-        bdml_object = Plot_3D(info[0][0], args.filename, data)
+        bdml_object = plot_3d.Plot_3D(info[0][0], args.filename, data)
         bdml_object.run()
 
 
